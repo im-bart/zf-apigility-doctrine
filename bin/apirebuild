@@ -1,0 +1,36 @@
+#!/bin/bash
+cd ${0%/*}/..
+
+echo "---~---~---~---~---~---~---~---~---~---~---~---~---~---~---~---~---~--"
+read -p " About to rebuild API module (DbApi). Continue? [y/n]" -n 1 -r
+echo 
+
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+    echo "---~---~---~---~---~---~---~---~---~---~---~---~---~---~---~---~---~--"
+    echo "  Preparing temporary application config..."
+    echo "---~---~---~---~---~---~---~---~---~---~---~---~---~---~---~---~---~--"
+    sed -n '/DbApi/!p' config/application.config.php > temp;
+    mv temp config/application.config.php;
+    echo "Done!"
+    echo 
+    
+    echo "---~---~---~---~---~---~---~---~---~---~---~---~---~---~---~---~---~--"
+    echo "  Generating api module ..."
+    echo "---~---~---~---~---~---~---~---~---~---~---~---~---~---~---~---~---~--"
+    rm -rf module/DbApi
+    ./app build api module
+    echo "Done!"
+    echo 
+    
+    echo "---~---~---~---~---~---~---~---~---~---~---~---~---~---~---~---~---~--"
+    echo "  Generating API resources and routes..."
+    echo "---~---~---~---~---~---~---~---~---~---~---~---~---~---~---~---~---~--"
+    ./app build api
+    echo "Done! The API has been rebuilt in module/DbApi"
+    echo 
+    echo
+
+else
+  echo "Aborting..."
+fi
