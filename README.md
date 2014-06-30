@@ -1,12 +1,12 @@
-Roll'n API
-==============================
+Apigility Doctrine Skeleton
+===========================
 
-This modification to zfcampus/zf-apigility-skeleton implements 
-zfcampus/zf-apigility-doctrine with ORM and sqlite.
+This modification sourced from from zfcampus/zf-apigility-skeleton 
+implements zfcampus/zf-apigility-doctrine with ORM and sqlite.
 
-To modify the doctrine api configuration modify the ```rollnapi[api_entities]``` in ```config/autoload/rollnapi.global.php```.  These arrays are sent to ```ZF\\Apigility\\Doctrine\\Admin\\Model\\DoctrineRestServiceResource``` to create the api.
+To modify the doctrine api configuration modify the ```apigility_doctrine[api_entities]``` in ```config/autoload/apigility_doctrine.global.php```.  These arrays are sent to ```ZF\\Apigility\\Doctrine\\Admin\\Model\\DoctrineRestServiceResource``` to create the api.
 
-To build the API enable development mode then run ```bin/apirebuild```
+To build the API ```enable development``` mode then run ```bin/apirebuild```
 
 
 There are additional parameters specific to zf-apigility-doctrine:

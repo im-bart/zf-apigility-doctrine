@@ -77,7 +77,7 @@ class DbApiController extends AbstractActionController
         $serviceResource = $this->getServiceLocator()->get('ZF\Apigility\Doctrine\Admin\Model\DoctrineRestServiceResource');
         $config = $this->getServiceLocator()->get('Config');
 
-        foreach ($config['rollnapi']['api_entities'] as $name => $apiConfig) {
+        foreach ($config['apigility_doctrine']['api_entities'] as $name => $apiConfig) {
             $serviceResource->setModuleName('DbApi');
             $serviceResource->create($apiConfig);
         }

@@ -1,7 +1,7 @@
 <?php
 
  return array(
-    'rollnapi' => [
+    'apigility_doctrine' => [
         'api_entities' => [
             'artist' => [
                 'object_manager' => 'doctrine.entitymanager.orm_default',
