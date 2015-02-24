@@ -62,6 +62,7 @@ class Module
      */
     public function getModuleDependencies()
     {
+        return[];
         return ['Phpro\DoctrineHydrationModule'];
     }
 }

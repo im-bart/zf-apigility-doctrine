@@ -103,10 +103,10 @@ class DoctrineResource extends AbstractResourceListener
      *
      * Example
      * $objectManager->getRepository(...)->findOneBy(
-         'multi' => 1,
-         'keyed' => 2,
-         'routes' => 3
-      );
+     *    'multi' => 1,
+     *    'keyed' => 2,
+     *    'routes' => 3
+     *  );
      *
      * @var string
      */
@@ -218,24 +218,6 @@ class DoctrineResource extends AbstractResourceListener
      */
     public function fetch($id)
     {
-        /**
-         * Zoom would be a nice-to-have
-        $parameters = $this->getEvent()->getQueryParams()->toArray();
-
-        if ($this->getEvent()->getRouteParam('zoom')) {
-            $parameters['zoom'] = $this->getEvent()->getRouteParam('zoom');
-        }
-
-        if (isset($parameters['zoom'])) {
-            foreach ($parameters['zoom'] as $collectionName) {
-                if ($this->getHydrator()->getExtractService()->hasStrategy($collectionName)) {
-                    $this->getHydrator()->getExtractService()->removeStrategy($collectionName);
-                    $this->getHydrator()->getExtractService()->addStrategy($collectionName, new CollectionExtract());
-                }
-            }
-        }
-        */
-
         $entity = $this->findEntity($id);
         $this->triggerDoctrineEvent(DoctrineResourceEvent::EVENT_FETCH_POST, $entity);
 
