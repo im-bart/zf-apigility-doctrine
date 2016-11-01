@@ -37,11 +37,19 @@ class DoctrineOrmAdapter extends Paginator implements AdapterInterface
             $this->getQuery()->setMaxResults(null);
         }
 
-        if (! array_key_exists($offset, $this->cache)) {
+        if (!array_key_exists($offset, $this->cache)) {
             $this->cache[$offset] = [];
         }
 
         $this->cache[$offset][$itemCountPerPage] = $this->getQuery()->getResult();
+
+        /**
+         * @see http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/dql-doctrine-query-language.html#first-and-max-result-items-dql-query-only
+         */
+        if (strstr($this->getQuery()->getDql(), 'INNER JOIN')) {
+            $this->cache[$offset][$itemCountPerPage] = array_slice($this->getQuery()->getResult(), 0, $itemCountPerPage);
+        }
+
 
         return $this->cache[$offset][$itemCountPerPage];
     }
