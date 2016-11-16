@@ -30,26 +30,54 @@ class DoctrineOrmAdapter extends Paginator implements AdapterInterface
         $this->getQuery()->setFirstResult($offset);
         $this->getQuery()->setMaxResults($itemCountPerPage);
 
+        if (!array_key_exists($offset, $this->cache)) {
+            $this->cache[$offset] = [];
+        }
+
         /**
          * @see http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/dql-doctrine-query-language.html#first-and-max-result-items-dql-query-only
          */
         if (strstr($this->getQuery()->getDql(), 'INNER JOIN')) {
             $this->getQuery()->setMaxResults(null);
-        }
+            try {
+                /*
+                 * We're attemping to iterate the query, which will leave it in an unworkable state even after catching
+                 * the exception. So we're cloning before attempting to iterate, then iterate the original if no
+                 * exception was thrown.
+                 */
+                $clone = clone $this->getQuery();
+                $clone->setParameters($this->getQuery()->getParameters());
+                $clone->iterate();
+                $iterableResult = $this->getQuery()->iterate();
+            } catch (\Exception $e) {
+                $modifier = 4;
+                $this->getQuery()->setMaxResults($itemCountPerPage * $modifier);
+                $result = array_slice($this->getQuery()->getResult(), 0, $itemCountPerPage);
+                while (count($result) < $itemCountPerPage) {
+                    $modifier += 2;
+                    $this->getQuery()->setMaxResults($itemCountPerPage * $modifier);
+                    $result = array_slice($this->getQuery()->getResult(), 0, $itemCountPerPage);
+                }
+                $this->cache[$offset][$itemCountPerPage] = $result;
+                return $result;
+            }
 
-        if (!array_key_exists($offset, $this->cache)) {
-            $this->cache[$offset] = [];
+            $result = [];
+            $iteration = 0;
+            foreach ($iterableResult as $row) {
+                ++ $iteration;
+                $result[] = $row[0];
+                if ($iteration >= $itemCountPerPage) {
+                    $this->cache[$offset][$itemCountPerPage] = $result;
+                    return $result;
+                }
+            }
+
+            $this->cache[$offset][$itemCountPerPage] = $result;
+            return $result;
         }
 
         $this->cache[$offset][$itemCountPerPage] = $this->getQuery()->getResult();
-
-        /**
-         * @see http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/dql-doctrine-query-language.html#first-and-max-result-items-dql-query-only
-         */
-        if (strstr($this->getQuery()->getDql(), 'INNER JOIN')) {
-            $this->cache[$offset][$itemCountPerPage] = array_slice($this->getQuery()->getResult(), 0, $itemCountPerPage);
-        }
-
 
         return $this->cache[$offset][$itemCountPerPage];
     }
