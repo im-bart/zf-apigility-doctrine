@@ -55,7 +55,7 @@ class DoctrineOrmAdapter extends Paginator implements AdapterInterface
                  */
                 $this->getQuery()->setMaxResults($itemCountPerPage * 10); // best guess
                 $this->cache[$offset][$itemCountPerPage] = array_slice($this->getQuery()->getResult(), 0, $itemCountPerPage);
-                return $result;
+                return $this->cache[$offset][$itemCountPerPage];
             }
 
             $result = [];
@@ -65,7 +65,7 @@ class DoctrineOrmAdapter extends Paginator implements AdapterInterface
                 $result[] = $row[0];
                 if ($iteration >= $itemCountPerPage) {
                     $this->cache[$offset][$itemCountPerPage] = $result;
-                    return $result;
+                    return $this->cache[$offset][$itemCountPerPage];
                 }
             }
 
