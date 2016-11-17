@@ -50,15 +50,11 @@ class DoctrineOrmAdapter extends Paginator implements AdapterInterface
                 $clone->iterate();
                 $iterableResult = $this->getQuery()->iterate();
             } catch (\Exception $e) {
-                $modifier = 4;
-                $this->getQuery()->setMaxResults($itemCountPerPage * $modifier);
-                $result = array_slice($this->getQuery()->getResult(), 0, $itemCountPerPage);
-                while (count($result) < $itemCountPerPage) {
-                    $modifier += 2;
-                    $this->getQuery()->setMaxResults($itemCountPerPage * $modifier);
-                    $result = array_slice($this->getQuery()->getResult(), 0, $itemCountPerPage);
-                }
-                $this->cache[$offset][$itemCountPerPage] = $result;
+                /**
+                 * We won't be able to iterate, just guess a good maximum (based on itemCountPerPage) and slice the result.
+                 */
+                $this->getQuery()->setMaxResults($itemCountPerPage * 10); // best guess
+                $this->cache[$offset][$itemCountPerPage] = array_slice($this->getQuery()->getResult(), 0, $itemCountPerPage);
                 return $result;
             }
 
